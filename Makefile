@@ -9,13 +9,13 @@ it:
 
 tests:
 	$(MAKE) prepare-test
-	sh vendor/bin/simple-phpunit
+	vendor/bin/simple-phpunit
 
 analyze:
 	npm audit
 	composer valid
 	php bin/console doctrine:schema:valid
-	sh vendor/bin/phpcs
+	vendor/bin/phpcs
 
 prepare-dev:
 	npm install
