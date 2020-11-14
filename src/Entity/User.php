@@ -5,12 +5,17 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\EntityListeners({"App\EntityListener\UserListener"})
+ * @UniqueEntity("email")
+ * @UniqueEntity("nickname")
  */
 class User implements UserInterface
 {
@@ -23,11 +28,13 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Assert\Email
+     * @Assert\NotBlank
      */
     private string $email;
 
     /**
-     * @ORM\Column(type="simple_array")
+     * @ORM\Column(type="array")
      */
     private array $roles = [];
 
@@ -36,7 +43,32 @@ class User implements UserInterface
      */
     private string $password;
 
+    /**
+     * @Assert\NotBlank
+     * @Assert\Length(min=8)
+     */
     private ?string $plainPassword = null;
+
+    /**
+     * @ORM\Column(type="string", unique=true)
+     * @Assert\NotBlank
+     */
+    private string $nickname;
+
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
+    private DateTimeImmutable $registeredAt;
+
+    /**
+     * @ORM\Column(type="datetime_immutable", nullable=true)
+     */
+    private ?DateTimeImmutable $suspendedAt = null;
+
+    public function __construct()
+    {
+        $this->registeredAt = new DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
@@ -123,5 +155,45 @@ class User implements UserInterface
     public function eraseCredentials()
     {
         $this->plainPassword = null;
+    }
+
+    public function getNickname(): string
+    {
+        return $this->nickname;
+    }
+
+    public function setNickname(string $nickname): self
+    {
+        $this->nickname = $nickname;
+        return $this;
+    }
+
+    public function getRegisteredAt(): ?\DateTimeImmutable
+    {
+        return $this->registeredAt;
+    }
+
+    public function setRegisteredAt(\DateTimeImmutable $registeredAt): self
+    {
+        $this->registeredAt = $registeredAt;
+
+        return $this;
+    }
+
+    public function getSuspendedAt(): ?\DateTimeImmutable
+    {
+        return $this->suspendedAt;
+    }
+
+    public function setSuspendedAt(\DateTimeImmutable $suspendedAt): self
+    {
+        $this->suspendedAt = $suspendedAt;
+
+        return $this;
+    }
+
+    public function isSuspended(): bool
+    {
+        return $this->suspendedAt !== null;
     }
 }
