@@ -37,7 +37,7 @@ class LoginTest extends WebTestCase
     /**
      * @dataProvider provideInvalidCredentials
      */
-    public function testIfCredentialsAreInvalid(string $email, string $password): void
+    public function testIfCredentialsAreInvalid(string $email, string $password, string $errorMessage): void
     {
         $client = static::createClient();
 
@@ -57,13 +57,13 @@ class LoginTest extends WebTestCase
 
         $client->followRedirect();
 
-        $this->assertSelectorTextContains("form[name=login] > div.alert", "Identifiants invalides.");
+        $this->assertSelectorTextContains("form[name=login] > div.alert", $errorMessage);
     }
 
     public function provideInvalidCredentials(): iterable
     {
-        yield ["fail@email.com", "password"];
-        yield ["admin@email.com", "fail"];
+        yield ["fail@email.com", "password", "Le nom d'utilisateur n'a pas pu être trouvé."];
+        yield ["admin@email.com", "fail", "Identifiants invalides."];
     }
 
     public function testIfCsrfTokenIsInvalid(): void
@@ -88,28 +88,5 @@ class LoginTest extends WebTestCase
         $client->followRedirect();
 
         $this->assertSelectorTextContains("form[name=login] > div.alert", "Jeton CSRF invalide.");
-    }
-
-    public function testIfAccountIsSuspended(): void
-    {
-        $client = static::createClient();
-
-        /** @var RouterInterface $router */
-        $router = $client->getContainer()->get("router");
-
-        $crawler = $client->request(Request::METHOD_GET, $router->generate("security_login"));
-
-        $form = $crawler->filter("form[name=login]")->form([
-            "email" => "user+suspended@email.com",
-            "password" => "password"
-        ]);
-
-        $client->submit($form);
-
-        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-
-        $client->followRedirect();
-
-        $this->assertSelectorTextContains("form[name=login] > div.alert", "Votre compte est suspendu.");
     }
 }

@@ -1,12 +1,10 @@
 security:
     encoders:
-        App\Entity\User:
+        App\Infrastructure\Symfony\Security\SecurityUser:
             algorithm: auto
     providers:
         user_provider:
-            entity:
-                class: App\Entity\User
-                property: email
+            id: App\Infrastructure\Symfony\Security\Provider\UserProvider
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -15,10 +13,10 @@ security:
             anonymous: true
             lazy: true
             provider: user_provider
-            user_checker: App\Security\UserChecker\UserChecker
+#            user_checker: App\Infrastructure\Symfony\Security\UserChecker\UserChecker
             guard:
                 authenticators:
-                    - App\Security\Guard\WebAuthenticator
+                    - App\Infrastructure\Symfony\Security\Guard\WebAuthenticator
             logout:
                 path: security_logout
     access_control:

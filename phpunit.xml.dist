@@ -6,7 +6,8 @@
       <directory suffix=".php">src</directory>
     </include>
     <exclude>
-      <directory>src/DataFixtures</directory>
+      <directory>src/Infrastructure/Doctrine/DataFixtures</directory>
+      <directory>src/Infrastructure/Doctrine/Entity</directory>
       <file>src/Kernel.php</file>
     </exclude>
     <report>

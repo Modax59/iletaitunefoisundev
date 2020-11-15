@@ -22,7 +22,7 @@ class RegistrationTest extends WebTestCase
 
         $form = $crawler->filter("form[name=registration]")->form([
             "registration[email]" => "user+new@email.com",
-            "registration[plainPassword]" => "password",
+            "registration[password]" => "password",
             "registration[nickname]" => "user+new"
         ]);
 
@@ -61,7 +61,7 @@ class RegistrationTest extends WebTestCase
         yield [
             [
                 "registration[email]" => "",
-                "registration[plainPassword]" => "password",
+                "registration[password]" => "password",
                 "registration[nickname]" => "user+new"
             ],
             "Cette valeur ne doit pas être vide."
@@ -70,7 +70,7 @@ class RegistrationTest extends WebTestCase
         yield [
             [
                 "registration[email]" => "user+new@email.com",
-                "registration[plainPassword]" => "",
+                "registration[password]" => "",
                 "registration[nickname]" => "user+new"
             ],
             "Cette valeur ne doit pas être vide."
@@ -79,7 +79,7 @@ class RegistrationTest extends WebTestCase
         yield [
             [
                 "registration[email]" => "user+new@email.com",
-                "registration[plainPassword]" => "password",
+                "registration[password]" => "password",
                 "registration[nickname]" => ""
             ],
             "Cette valeur ne doit pas être vide."
@@ -88,7 +88,7 @@ class RegistrationTest extends WebTestCase
         yield [
             [
                 "registration[email]" => "user+new@email.com",
-                "registration[plainPassword]" => "fail",
+                "registration[password]" => "fail",
                 "registration[nickname]" => "user+new"
             ],
             "Cette chaîne est trop courte. Elle doit avoir au minimum 8 caractères."
@@ -97,7 +97,7 @@ class RegistrationTest extends WebTestCase
         yield [
             [
                 "registration[email]" => "user+new@email.com",
-                "registration[plainPassword]" => "fail",
+                "registration[password]" => "fail",
                 "registration[nickname]" => "user+new"
             ],
             "Cette chaîne est trop courte. Elle doit avoir au minimum 8 caractères."
@@ -106,19 +106,19 @@ class RegistrationTest extends WebTestCase
         yield [
             [
                 "registration[email]" => "admin@email.com",
-                "registration[plainPassword]" => "password",
+                "registration[password]" => "password",
                 "registration[nickname]" => "user+new"
             ],
-            "Cette valeur est déjà utilisée."
+            "Cette adresse email existe déjà."
         ];
 
         yield [
             [
                 "registration[email]" => "user+new@email.com",
-                "registration[plainPassword]" => "password",
+                "registration[password]" => "password",
                 "registration[nickname]" => "admin"
             ],
-            "Cette valeur est déjà utilisée."
+            "Ce pseudo existe déjà."
         ];
     }
 
@@ -134,7 +134,7 @@ class RegistrationTest extends WebTestCase
         $form = $crawler->filter("form[name=registration]")->form([
             "registration[_token]" => "fail",
             "registration[email]" => "user+new@email.com",
-            "registration[plainPassword]" => "password",
+            "registration[password]" => "password",
             "registration[nickname]" => "user+new"
         ]);
 
